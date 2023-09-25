@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Canvas Line Strokes to JSON</title>
+  </head>
+  <body>
+    <canvas
+      id="canvas"
+      width="500"
+      height="500"
+      style="border: 1px solid black"
+    ></canvas>
+    <button id="saveButton">Save Strokes</button>
+
+    <script>
+      const canvas = document.getElementById("canvas");
+      const context = canvas.getContext("2d");
+      const strokes = [];
+
+      let isDrawing = false;
+      let startTime = null;
+
+      canvas.addEventListener("mousedown", (e) => {
+        isDrawing = true;
+        const x = e.clientX - canvas.getBoundingClientRect().left;
+        const y = e.clientY - canvas.getBoundingClientRect().top;
+        startTime = Date.now();
+        strokes.push({ x, y });
+      });
+
+      canvas.addEventListener("mousemove", (e) => {
+        if (!isDrawing) return;
+        const x = e.clientX - canvas.getBoundingClientRect().left;
+        const y = e.clientY - canvas.getBoundingClientRect().top;
+        const t = Date.now() - startTime;
+        strokes.push({ x, y });
+
+        context.beginPath();
+        context.moveTo(x, y);
+        context.lineTo(x + 1, y + 1);
+        context.stroke();
+      });
+
+      canvas.addEventListener("mouseup", () => {
+        isDrawing = false;
+      });
+
+      document.getElementById("saveButton").addEventListener("click", () => {
+        const jsonStrokes = JSON.stringify(strokes);
+        console.log(jsonStrokes);
+
+        // Here, you can save jsonStrokes to a file or send it to a server.
+      });
+    </script>
+  </body>
+</html>
